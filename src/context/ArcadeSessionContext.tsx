@@ -1,9 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { Keypair, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from "react";
+import { Keypair, PublicKey, SystemProgram, Transaction, LAMPORTS_PER_SOL, Connection, clusterApiUrl } from "@solana/web3.js";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import bs58 from "bs58";
+
+const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl("devnet");
 
 interface ArcadeSessionContextType {
   sessionKey: PublicKey | null;
@@ -30,7 +32,8 @@ const ArcadeSessionContext = createContext<ArcadeSessionContextType>({
 export const useArcadeSession = () => useContext(ArcadeSessionContext);
 
 export const ArcadeSessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { connection } = useConnection();
+  // Using a dedicated connection for more control over RPC endpoint
+  const connection = useMemo(() => new Connection(RPC_URL, "confirmed"), []);
   const { publicKey, sendTransaction } = useWallet();
   const [sessionKeypair, setSessionKeypair] = useState<Keypair | null>(null);
   const [balance, setBalance] = useState<number>(0);

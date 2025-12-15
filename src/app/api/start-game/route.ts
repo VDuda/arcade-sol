@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Connection, PublicKey, LAMPORTS_PER_SOL, clusterApiUrl } from "@solana/web3.js";
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { getGameById } from "@/lib/games";
 
-// This would be your platform's main wallet that collects fees
-const PLATFORM_WALLET = "So11111111111111111111111111111111111111112"; // Using Wrapped SOL as placeholder
+const PLATFORM_WALLET = process.env.NEXT_PUBLIC_PLATFORM_WALLET || "So11111111111111111111111111111111111111112";
+const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     // Verify the payment
     // In a production app, use a dedicated RPC with rate limits/API keys.
-    const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
+    const connection = new Connection(RPC_URL, "confirmed");
     
     // Check transaction status
     const txInfo = await connection.getTransaction(signature, {

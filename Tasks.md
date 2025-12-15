@@ -3,9 +3,9 @@
 This document outlines the roadmap for transforming Arcade.sol from a Hackathon MVP into a scalable, production-ready decentralized gaming platform.
 
 ## Phase 1: Robustness & Security (Immediate Priority)
-- [ ] **Environment Configuration:**
+- [x] **Environment Configuration:**
     - [x] Create `.env.local` and `.env.production` for managing RPC URLs and wallet secrets.
-    - [ ] Replace hardcoded Devnet URLs with environment variables.
+    - [x] Replace hardcoded Devnet URLs with environment variables.
 - [x] **Error Handling:**
     - [x] Create a global UI Toast/Notification system (replace `alert()`).
     - [ ] Implement retry logic for failed Solana transactions (e.g., due to congestion).

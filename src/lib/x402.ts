@@ -1,4 +1,6 @@
-import { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction, clusterApiUrl } from "@solana/web3.js";
+
+const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl("devnet");
 
 interface PaymentInfo {
   recipient: string;
@@ -27,8 +29,9 @@ export async function fetchWith402(
     console.log(`[x402] Payment Required: ${amount} Lamports to ${recipient}`);
 
     // 3. Construct Payment
-    // Check balance first
-    const balance = await connection.getBalance(sessionKeypair.publicKey);
+    // Check balance first with a new connection for consistency with RPC_URL
+    const balanceConnection = new Connection(RPC_URL, "confirmed");
+    const balance = await balanceConnection.getBalance(sessionKeypair.publicKey);
     if (balance < amount) {
       throw new Error("INSUFFICIENT_FUNDS");
     }
