@@ -39,11 +39,11 @@ This document outlines the roadmap for transforming Arcade.sol from a Hackathon 
     - [ ] Use Metaplex Core for low-cost NFT minting.
 
 ## Phase 4: UI/UX & Polish ("Juice")
-- [ ] **Sound Design:**
-    - [ ] Add retro UI sound effects (hover, click, coin insert, game over).
-    - [ ] Add a background synth-wave loop (mute-able).
-- [ ] **Visuals:**
-    - [ ] Implement a CRT/Glitch shader effect on the Game Canvas.
+- [x] **Sound Design:**
+    - [x] Add retro UI sound effects (hover, click, coin insert, game over).
+    - [x] Add a background synth-wave loop (mute-able).
+- [x] **Visuals:**
+    - [x] Implement a CRT/Glitch shader effect on the Game Canvas.
     - [ ] Add framer-motion page transitions between Lobby and Game.
 - [ ] **Responsive Mobile Design:**
     - [ ] Ensure the Canvas games handle touch events correctly.

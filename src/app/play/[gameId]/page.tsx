@@ -77,11 +77,11 @@ export default function GamePage({ params }: { params: Promise<{ gameId: string 
   if (isPlaying && game.component) {
     const GameComponent = game.component;
     return (
-      <div className="w-full h-[80vh] relative bg-black rounded-xl overflow-hidden border-4 border-gray-800 shadow-2xl">
+      <div className="w-full h-[80vh] relative bg-black rounded-xl overflow-hidden border-4 border-gray-800 shadow-2xl crt-scanline">
          <GameComponent onGameOver={handleGameOver} />
          <button 
            onClick={() => setIsPlaying(false)}
-           className="absolute top-4 right-4 px-3 py-1 bg-red-600/50 hover:bg-red-600 rounded text-xs"
+           className="absolute top-4 right-4 px-3 py-1 bg-red-600/50 hover:bg-red-600 rounded text-xs z-50"
          >
            QUIT
          </button>
@@ -100,8 +100,8 @@ export default function GamePage({ params }: { params: Promise<{ gameId: string 
       <div className={`w-full aspect-video bg-gradient-to-br ${game.accentColor} rounded-xl p-1 relative overflow-hidden group`}>
         <div className="absolute inset-0 bg-black/40" />
         
-        {/* CRT Scanline Effect */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 pointer-events-none bg-[length:100%_4px,3px_100%]" />
+        {/* CRT Scanline Effect (Preview) */}
+        <div className="absolute inset-0 crt-scanline z-10 pointer-events-none opacity-50" />
 
         <div className="relative z-20 w-full h-full bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-8 border border-white/10 rounded-lg">
           <h1 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 uppercase drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">

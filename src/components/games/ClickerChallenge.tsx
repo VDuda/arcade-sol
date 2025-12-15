@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { MousePointer2, Timer, Trophy } from "lucide-react";
+import { useSoundFx } from "@/hooks/useSoundFx";
 
 interface GameProps {
   onGameOver: (score: number) => void;
@@ -16,6 +17,7 @@ const ClickerChallenge: React.FC<GameProps> = ({ onGameOver }) => {
   const [isFinished, setIsFinished] = useState(false);
   
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const { playClick, playSuccess } = useSoundFx();
 
   // Timer Logic
   useEffect(() => {
@@ -27,14 +29,17 @@ const ClickerChallenge: React.FC<GameProps> = ({ onGameOver }) => {
     } else if (timeLeft === 0 && isActive) {
       setIsActive(false);
       setIsFinished(true);
+      playSuccess();
       onGameOver(score);
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft, onGameOver, score]);
+  }, [isActive, timeLeft, onGameOver, score, playSuccess]);
 
   const handleClick = () => {
     if (isFinished) return;
     
+    playClick();
+
     if (!isActive && timeLeft === GAME_DURATION) {
       setIsActive(true);
     }

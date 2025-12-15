@@ -7,16 +7,20 @@ import { useArcadeSession } from "@/context/ArcadeSessionContext";
 import { Coins, PlusCircle, Loader2, LogOut } from "lucide-react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { toast } from "sonner";
+import { useSoundFx } from "@/hooks/useSoundFx";
 
 export default function Navbar() {
   const { balance, deposit, withdraw, isLoading } = useArcadeSession();
   const [isDepositing, setIsDepositing] = useState(false);
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const { playCoin, playSuccess, playClick } = useSoundFx();
 
   const handleDeposit = async () => {
+    playClick();
     setIsDepositing(true);
     try {
       await deposit(0.1); // Deposit 0.1 SOL
+      playCoin();
       toast.success("Deposit successful! +0.1 SOL added to session.");
     } catch (e: any) {
       console.error(e);
@@ -27,10 +31,12 @@ export default function Navbar() {
   };
 
   const handleWithdraw = async () => {
+    playClick();
     if (!confirm("Withdraw all funds from session wallet to your main wallet?")) return;
     setIsWithdrawing(true);
     try {
       const signature = await withdraw();
+      playSuccess();
       toast.success("Withdraw successful! Funds returned to wallet.");
       console.log("Withdraw tx:", signature);
     } catch (e: any) {

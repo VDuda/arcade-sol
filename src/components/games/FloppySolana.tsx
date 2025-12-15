@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
+import { useSoundFx } from "@/hooks/useSoundFx";
 
 interface GameProps {
   onGameOver: (score: number) => void;
@@ -9,6 +10,7 @@ interface GameProps {
 const FloppySolana: React.FC<GameProps> = ({ onGameOver }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
+  const { playJump, playCrash, playCoin } = useSoundFx();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -94,6 +96,7 @@ const FloppySolana: React.FC<GameProps> = ({ onGameOver }) => {
             currentScore++;
             setScore(currentScore);
             pipe.passed = true;
+            playCoin();
         }
       });
 
@@ -143,6 +146,7 @@ const FloppySolana: React.FC<GameProps> = ({ onGameOver }) => {
     const endGame = () => {
       isGameOver = true;
       cancelAnimationFrame(animationId);
+      playCrash();
       onGameOver(currentScore);
     };
 
@@ -150,6 +154,7 @@ const FloppySolana: React.FC<GameProps> = ({ onGameOver }) => {
         e.preventDefault();
         if (!isGameOver) {
             birdVelocity = JUMP;
+            playJump();
         }
     };
 
@@ -170,7 +175,7 @@ const FloppySolana: React.FC<GameProps> = ({ onGameOver }) => {
       canvas.removeEventListener('touchstart', handleInput);
       window.removeEventListener('keydown', handleInput); // Clean up might be tricky with anonymous function, but acceptable for MVP
     };
-  }, [onGameOver]);
+  }, [onGameOver, playJump, playCrash, playCoin]);
 
   return (
     <div className="w-full h-full relative cursor-pointer">
