@@ -11,7 +11,7 @@
 
 **Arcade.sol** reclaims the nostalgia of the physical arcade cabinet using Solana and the HTTP 402 standard. We replace ad-spam and monthly subscriptions with a frictionless **"Pay-Per-Life"** model.
 
-[**Watch the Demo**](#) | [**View on Devpost**](#) | [**Live Deployment**](#)
+[**Watch the Demo**](https://go.diginomad.xyz/solona-arcade-demo-video) | | [**Live Deployment**](https://arcade-sol.vercel.app/)
 
 ---
 
