@@ -44,7 +44,7 @@ This document outlines the roadmap for transforming Arcade.sol from a Hackathon 
     - [x] Add a background synth-wave loop (mute-able).
 - [x] **Visuals:**
     - [x] Implement a CRT/Glitch shader effect on the Game Canvas.
-    - [ ] Add framer-motion page transitions between Lobby and Game.
+    - [x] Add framer-motion page transitions between Lobby and Game.
 - [ ] **Responsive Mobile Design:**
     - [ ] Ensure the Canvas games handle touch events correctly.
     - [ ] Optimize the layout for portrait mode.
