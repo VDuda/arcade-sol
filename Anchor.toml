@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "programs/game-registry",
+]
+
+[profile.release]
+overflow-checks = true

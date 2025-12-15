@@ -1,0 +1,18 @@
+[package]
+name = "game-registry"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "game_registry"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-messages = []
+cpi = ["anchor-lang/cpi"]
+default = []
+
+[dependencies]
+anchor-lang = { version = "0.30.0" }

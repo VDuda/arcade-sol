@@ -4,20 +4,21 @@ This document outlines the roadmap for transforming Arcade.sol from a Hackathon 
 
 ## Phase 1: Robustness & Security (Immediate Priority)
 - [ ] **Environment Configuration:**
-    - [ ] Create `.env.local` and `.env.production` for managing RPC URLs and wallet secrets.
+    - [x] Create `.env.local` and `.env.production` for managing RPC URLs and wallet secrets.
     - [ ] Replace hardcoded Devnet URLs with environment variables.
-- [ ] **Error Handling:**
-    - [ ] Create a global UI Toast/Notification system (replace `alert()`).
+- [x] **Error Handling:**
+    - [x] Create a global UI Toast/Notification system (replace `alert()`).
     - [ ] Implement retry logic for failed Solana transactions (e.g., due to congestion).
     - [ ] Handle "Wallet Disconnected" events gracefully during gameplay.
-- [ ] **Session Security:**
+- [x] **Session Security:**
     - [ ] Encrypt the Session Key in `localStorage` (optional but good for hygiene).
-    - [ ] Add a "Withdraw" button to let users claim leftover SOL from their session wallet back to their main wallet.
+    - [x] Add a "Withdraw" button to let users claim leftover SOL from their session wallet back to their main wallet.
 
 ## Phase 2: The Creator Economy (Smart Contracts)
 - [ ] **On-Chain Registry (Solana Program):**
-    - [ ] Develop a simple Anchor program to register games on-chain.
-        - Struct: `Game { authority, fee_lamports, active }`.
+    - [x] Develop a simple Anchor program to register games on-chain.
+        - [x] Struct: `Game { authority, fee_lamports, active }`.
+        - [x] Program scaffold created (`Anchor.toml`, `programs/game-registry/Cargo.toml`, `programs/game-registry/src/lib.rs`).
     - [ ] Replace `lib/games.ts` with on-chain data fetching.
 - [ ] **Automated Revenue Split:**
     - [ ] Update the API/Contract to perform the split (90/10) atomically in one transaction.
