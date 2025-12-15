@@ -1,6 +1,7 @@
 import React from 'react';
 import FloppySolana from '@/components/games/FloppySolana';
 import ClickerChallenge from '@/components/games/ClickerChallenge';
+import SpaceInvaders from '@/components/games/SpaceInvaders';
 
 export interface GameConfig {
   id: string;
@@ -33,6 +34,16 @@ export const games: GameConfig[] = [
     component: ClickerChallenge,
     thumbnail: '/thumbnails/clicker.png',
     accentColor: 'from-green-400 to-emerald-600'
+  },
+  {
+    id: 'space-invaders',
+    title: 'Solana Invaders',
+    description: 'Defend the network from FUD aliens. Classic arcade shooter action.',
+    developerAddress: 'So11111111111111111111111111111111111111112',
+    costPerLife: 150000, // 0.00015 SOL
+    component: SpaceInvaders,
+    thumbnail: '/thumbnails/invaders.png',
+    accentColor: 'from-purple-500 to-indigo-600'
   }
 ];
 

@@ -53,8 +53,8 @@ This document outlines the roadmap for transforming Arcade.sol from a Hackathon 
 - [ ] **Arcade SDK (`@arcade-sol/react`):**
     - [ ] Abstract the `useArcadeSession` and `fetchWith402` into a clean npm package.
     - [ ] Allow any React developer to wrap their game with `<ArcadeGame gateCost={0.01} />`.
-- [ ] **Game 3: "Space Invaders" Clone:**
-    - [ ] A shooter game to test more complex inputs.
+- [x] **Game 3: "Space Invaders" Clone:**
+    - [x] A shooter game to test more complex inputs.
 - [ ] **Game 4: "Multiplayer Pong" (Advanced):**
     - [ ] Use a state channel or simple WebSocket server to sync two players who both paid the entry fee.
 
