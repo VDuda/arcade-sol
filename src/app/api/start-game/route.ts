@@ -4,6 +4,7 @@ import { getGameById } from "@/lib/games";
 
 const PLATFORM_WALLET = process.env.NEXT_PUBLIC_PLATFORM_WALLET || "So11111111111111111111111111111111111111112";
 const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com";
+const USDC_MINT = process.env.NEXT_PUBLIC_USDC_MINT;
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
           paymentInfo: {
             recipient: PLATFORM_WALLET,
             amount: game.costPerLife,
-            token: "SOL",
+            token: USDC_MINT || "SOL",
             label: `Play ${game.title}`,
             message: "Game Session Fee"
           }

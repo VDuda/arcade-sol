@@ -20,7 +20,7 @@ export const games: GameConfig[] = [
     title: 'Floppy Solana',
     description: 'Tap to fly. Avoid the pipes. The classic frustration, now on-chain.',
     developerAddress: 'So11111111111111111111111111111111111111112', // Wrapped SOL as placeholder dev
-    costPerLife: 100000, // 0.0001 SOL
+    costPerLife: 100000, // 0.10 USDC
     component: FloppySolana,
     thumbnail: '/thumbnails/floppy.png',
     accentColor: 'from-yellow-400 to-orange-500'
@@ -30,7 +30,7 @@ export const games: GameConfig[] = [
     title: 'Clicker Challenge',
     description: 'How fast can you click in 10 seconds? Break your mouse, earn high scores.',
     developerAddress: 'So11111111111111111111111111111111111111112',
-    costPerLife: 50000, // 0.00005 SOL
+    costPerLife: 50000, // 0.05 USDC
     component: ClickerChallenge,
     thumbnail: '/thumbnails/clicker.png',
     accentColor: 'from-green-400 to-emerald-600'
@@ -40,7 +40,7 @@ export const games: GameConfig[] = [
     title: 'Solana Invaders',
     description: 'Defend the network from FUD aliens. Classic arcade shooter action.',
     developerAddress: 'So11111111111111111111111111111111111111112',
-    costPerLife: 150000, // 0.00015 SOL
+    costPerLife: 150000, // 0.15 USDC
     component: SpaceInvaders,
     thumbnail: '/thumbnails/invaders.png',
     accentColor: 'from-purple-500 to-indigo-600'

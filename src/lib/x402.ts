@@ -1,4 +1,5 @@
 import { Connection, Keypair, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction, clusterApiUrl } from "@solana/web3.js";
+import { getAssociatedTokenAddress, createTransferInstruction, getAccount, createAssociatedTokenAccountInstruction } from "@solana/spl-token";
 
 const RPC_URL = process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl("devnet");
 
@@ -24,25 +25,73 @@ export async function fetchWith402(
   // 2. Handle 402
   if (response.status === 402) {
     const data = await response.json();
-    const { recipient, amount } = data.paymentInfo as PaymentInfo;
+    const { recipient, amount, token } = data.paymentInfo as PaymentInfo;
 
-    console.log(`[x402] Payment Required: ${amount} Lamports to ${recipient}`);
+    console.log(`[x402] Payment Required: ${amount} ${token} to ${recipient}`);
+
+    const balanceConnection = new Connection(RPC_URL, "confirmed");
+    const transaction = new Transaction();
 
     // 3. Construct Payment
-    // Check balance first with a new connection for consistency with RPC_URL
-    const balanceConnection = new Connection(RPC_URL, "confirmed");
-    const balance = await balanceConnection.getBalance(sessionKeypair.publicKey);
-    if (balance < amount) {
-      throw new Error("INSUFFICIENT_FUNDS");
-    }
+    if (!token || token === "SOL") {
+      // --- Native SOL Transfer ---
+      const balance = await balanceConnection.getBalance(sessionKeypair.publicKey);
+      if (balance < amount) {
+        throw new Error("INSUFFICIENT_FUNDS");
+      }
 
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: sessionKeypair.publicKey,
-        toPubkey: new PublicKey(recipient),
-        lamports: amount,
-      })
-    );
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: sessionKeypair.publicKey,
+          toPubkey: new PublicKey(recipient),
+          lamports: amount,
+        })
+      );
+    } else {
+      // --- SPL Token Transfer (e.g. USDC) ---
+      const mint = new PublicKey(token);
+      const recipientPubkey = new PublicKey(recipient);
+
+      // Get ATAs
+      const sourceATA = await getAssociatedTokenAddress(mint, sessionKeypair.publicKey);
+      const destATA = await getAssociatedTokenAddress(mint, recipientPubkey);
+
+      // Check Balance
+      try {
+        const account = await getAccount(balanceConnection, sourceATA);
+        if (Number(account.amount) < amount) {
+           const tokenName = token === '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU' ? 'USDC' : (token || 'USDC');
+           throw new Error(`INSUFFICIENT_FUNDS: Not enough ${tokenName} in session wallet.`);
+        }
+      } catch (e: any) {
+        // Account likely doesn't exist
+        const tokenName = token === '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU' ? 'USDC' : (token || 'USDC');
+        throw new Error(`INSUFFICIENT_FUNDS: Not enough ${tokenName} in session wallet (Account missing).`);
+      }
+
+      // Check if Destination ATA exists
+      const destAccountInfo = await balanceConnection.getAccountInfo(destATA);
+      if (!destAccountInfo) {
+        console.log("[x402] Creating destination ATA for platform wallet...");
+        transaction.add(
+          createAssociatedTokenAccountInstruction(
+            sessionKeypair.publicKey, // Payer (Session Wallet)
+            destATA,
+            recipientPubkey, // Owner (Platform Wallet)
+            mint
+          )
+        );
+      }
+
+      transaction.add(
+        createTransferInstruction(
+          sourceATA, 
+          destATA, 
+          sessionKeypair.publicKey, 
+          amount
+        )
+      );
+    }
 
     // 4. Send & Confirm (using the session keypair to sign)
     try {
@@ -64,7 +113,7 @@ export async function fetchWith402(
       
     } catch (e: any) {
       console.error("[x402] Payment Failed", e);
-      throw e; // Rethrow original error (likely simulation failed if we didn't catch balance earlier)
+      throw e; // Rethrow original error
     }
   }
 
