@@ -10,6 +10,8 @@ export const metadata: Metadata = {
   description: "The Web3 Quarter Slot. Pay-per-life gaming on Solana.",
 };
 
+import Navbar from "@/components/Navbar";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -19,7 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} bg-slate-950 text-white min-h-screen`}>
         <Providers>
-          {children}
+          <Navbar />
+          <main className="container mx-auto px-4 py-8">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>
