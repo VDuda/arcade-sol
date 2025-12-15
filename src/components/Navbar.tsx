@@ -4,22 +4,40 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useArcadeSession } from "@/context/ArcadeSessionContext";
-import { Coins, PlusCircle, Loader2 } from "lucide-react";
+import { Coins, PlusCircle, Loader2, LogOut } from "lucide-react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { toast } from "sonner";
 
 export default function Navbar() {
-  const { balance, deposit, isLoading } = useArcadeSession();
+  const { balance, deposit, withdraw, isLoading } = useArcadeSession();
   const [isDepositing, setIsDepositing] = useState(false);
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
 
   const handleDeposit = async () => {
     setIsDepositing(true);
     try {
       await deposit(0.1); // Deposit 0.1 SOL
-    } catch (e) {
+      toast.success("Deposit successful! +0.1 SOL added to session.");
+    } catch (e: any) {
       console.error(e);
-      alert("Deposit failed. Check console.");
+      toast.error(e.message || "Deposit failed.");
     } finally {
       setIsDepositing(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!confirm("Withdraw all funds from session wallet to your main wallet?")) return;
+    setIsWithdrawing(true);
+    try {
+      const signature = await withdraw();
+      toast.success("Withdraw successful! Funds returned to wallet.");
+      console.log("Withdraw tx:", signature);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e.message || "Withdraw failed.");
+    } finally {
+      setIsWithdrawing(false);
     }
   };
 
@@ -52,6 +70,17 @@ export default function Navbar() {
           >
             {isDepositing ? <Loader2 size={20} className="animate-spin" /> : <PlusCircle size={20} className="text-green-400" />}
           </button>
+
+          {balance > 5000 && (
+             <button 
+               onClick={handleWithdraw}
+               disabled={isWithdrawing}
+               className="p-1 hover:bg-white/10 rounded-full transition-colors disabled:opacity-50"
+               title="Withdraw Funds"
+             >
+               {isWithdrawing ? <Loader2 size={20} className="animate-spin" /> : <LogOut size={20} className="text-red-400" />}
+             </button>
+          )}
         </div>
 
         <WalletMultiButton style={{ height: 40, borderRadius: 20 }} />

@@ -11,6 +11,7 @@ interface ArcadeSessionContextType {
   balance: number;
   isLoading: boolean;
   deposit: (amountSOL: number) => Promise<string>;
+  withdraw: () => Promise<string>;
   refreshBalance: () => Promise<void>;
   resetSession: () => void;
 }
@@ -21,6 +22,7 @@ const ArcadeSessionContext = createContext<ArcadeSessionContextType>({
   balance: 0,
   isLoading: true,
   deposit: async () => "",
+  withdraw: async () => "",
   refreshBalance: async () => {},
   resetSession: () => {},
 });
@@ -99,11 +101,52 @@ export const ArcadeSessionProvider: React.FC<{ children: React.ReactNode }> = ({
       })
     );
 
-    const signature = await sendTransaction(transaction, connection);
+    try {
+      const signature = await sendTransaction(transaction, connection);
+      await connection.confirmTransaction(signature, "confirmed");
+      await refreshBalance();
+      return signature;
+    } catch (e: any) {
+      if (e.name === "WalletSendTransactionError" || e.message.includes("User rejected")) {
+        throw new Error("Transaction cancelled by user.");
+      }
+      throw e;
+    }
+  }, [publicKey, sessionKeypair, connection, sendTransaction, refreshBalance]);
+
+  // Withdraw Function
+  const withdraw = useCallback(async () => {
+    if (!publicKey || !sessionKeypair) {
+      throw new Error("Wallet not connected or session not initialized");
+    }
+    
+    // Refresh balance to get exact amount
+    const currentBalance = await connection.getBalance(sessionKeypair.publicKey);
+    
+    // Estimate fee (5000 lamports is standard for one sig, let's leave 5000 buffer)
+    const FEE_BUFFER = 5000;
+    
+    if (currentBalance < FEE_BUFFER) {
+      throw new Error("Balance too low to withdraw (covers gas).");
+    }
+
+    const withdrawAmount = currentBalance - FEE_BUFFER;
+
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: sessionKeypair.publicKey,
+        toPubkey: publicKey,
+        lamports: withdrawAmount,
+      })
+    );
+
+    // Sign with the session keypair
+    const signature = await connection.sendTransaction(transaction, [sessionKeypair]);
     await connection.confirmTransaction(signature, "confirmed");
     await refreshBalance();
+    
     return signature;
-  }, [publicKey, sessionKeypair, connection, sendTransaction, refreshBalance]);
+  }, [publicKey, sessionKeypair, connection, refreshBalance]);
 
   return (
     <ArcadeSessionContext.Provider
@@ -113,6 +156,7 @@ export const ArcadeSessionProvider: React.FC<{ children: React.ReactNode }> = ({
         balance,
         isLoading,
         deposit,
+        withdraw,
         refreshBalance,
         resetSession
       }}

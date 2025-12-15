@@ -8,6 +8,7 @@ import { getGameById } from "@/lib/games";
 import { fetchWith402 } from "@/lib/x402";
 import { Loader2, AlertCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function GamePage({ params }: { params: Promise<{ gameId: string }> }) {
   const { gameId } = use(params);
@@ -48,12 +49,20 @@ export default function GamePage({ params }: { params: Promise<{ gameId: string 
 
       if (response.success) {
         setIsPlaying(true);
+        toast.success("COIN INSERTED! GOOD LUCK!");
       } else {
         setError(response.error || "Failed to start game");
       }
     } catch (e: any) {
       console.error(e);
-      setError(e.message || "Payment Failed");
+      if (e.message === "INSUFFICIENT_FUNDS" || e.message.includes("Attempt to debit an account but found no record")) {
+        const msg = "Not enough coins! Please click the + button in the navbar to deposit.";
+        setError(msg);
+        toast.error(msg);
+      } else {
+        setError(e.message || "Payment Failed");
+        toast.error(e.message || "Payment Failed");
+      }
     } finally {
       setIsStarting(false);
     }

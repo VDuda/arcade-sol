@@ -27,6 +27,12 @@ export async function fetchWith402(
     console.log(`[x402] Payment Required: ${amount} Lamports to ${recipient}`);
 
     // 3. Construct Payment
+    // Check balance first
+    const balance = await connection.getBalance(sessionKeypair.publicKey);
+    if (balance < amount) {
+      throw new Error("INSUFFICIENT_FUNDS");
+    }
+
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: sessionKeypair.publicKey,
@@ -53,9 +59,9 @@ export async function fetchWith402(
         body: JSON.stringify({ ...body, signature }),
       });
       
-    } catch (e) {
+    } catch (e: any) {
       console.error("[x402] Payment Failed", e);
-      throw new Error("Payment Failed: Insufficient funds in session wallet?");
+      throw e; // Rethrow original error (likely simulation failed if we didn't catch balance earlier)
     }
   }
 
